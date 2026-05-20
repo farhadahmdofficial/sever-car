@@ -12,7 +12,11 @@ const port = process.env.PORT || 8000;
 
 
 // const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb://carnew:Zbl6jFNiqDJqwDIi@ac-rjzhhgu-shard-00-00.wiyy1ca.mongodb.net:27017,ac-rjzhhgu-shard-00-01.wiyy1ca.mongodb.net:27017,ac-rjzhhgu-shard-00-02.wiyy1ca.mongodb.net:27017/?ssl=true&replicaSet=atlas-kisohd-shard-0&authSource=admin&appName=Cluster0";
+const uri = process.env.MONGO_URI;
+
+
+
+// const uri = "mongodb://carnew:Zbl6jFNiqDJqwDIi@ac-rjzhhgu-shard-00-00.wiyy1ca.mongodb.net:27017,ac-rjzhhgu-shard-00-01.wiyy1ca.mongodb.net:27017,ac-rjzhhgu-shard-00-02.wiyy1ca.mongodb.net:27017/?ssl=true&replicaSet=atlas-kisohd-shard-0&authSource=admin&appName=Cluster0";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -68,6 +72,12 @@ async function run() {
   }
 }
 run().catch(console.dir);
+
+
+
+
+
+// sever sid data add  
 
 
 
