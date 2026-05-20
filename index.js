@@ -27,6 +27,23 @@ const client = new MongoClient(uri, {
   }
 });
 
+
+const loger =(req ,res,next) => {
+  console.log(`this is loger middle ware ${req.method} and url is ${req.url}`);
+  next();
+};
+
+
+const verifyToken = (req, res, next) => {
+  console.log(req.headers);
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    return res.status(401).send('Authorization header is missing');
+  }
+  // Add token verification logic here
+  next();
+};
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -37,14 +54,14 @@ async function run() {
     const carCollection = db.collection("cars");
 
 
-    app.get('/cars', async(req, res) => {
+    app.get('/cars', loger,async(req, res) => {
       const cursor = carCollection.find();
       const result = await cursor.toArray();
       res.send(result);
     });
 
 
-    app.get('/cars/:carid', async(req, res) => {
+    app.get('/cars/:carid', loger,verifyToken, async(req, res) => {
       const { carid } = req.params;
       const query = { _id: new ObjectId(carid) };
       const result = await carCollection.findOne(query);
