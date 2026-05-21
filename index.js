@@ -1,6 +1,9 @@
 
 
 
+
+
+
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
@@ -8,7 +11,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // 👈 ফ্রন্টএন্ড থেকে আসা JSON বডি রিড করার জন্য এটি জরুরি
+app.use(express.json()); 
 
 const port = process.env.PORT || 8000;
 const uri = process.env.MONGO_URI;
@@ -21,13 +24,13 @@ const client = new MongoClient(uri, {
   }
 });
 
-// 📋 ১. লগার মিডলওয়্যার
+// 📋 ১. লগার মিডলওয়্যার
 const loger = (req, res, next) => {
   console.log(`[LOG] ${req.method} -> ${req.url}`);
   next();
 };
 
-// 🔒 ২. টোকেন ভেরিফিকেশন মিডলওয়্যার (ফাইনাল কোড)
+// 🔒 ২. টোকen ভেরিফিকেশন মিডলওয়্যার
 const verifyToken = (req, res, next) => {
   const authHeader = req.headers.authorization;
   
@@ -36,7 +39,6 @@ const verifyToken = (req, res, next) => {
     return res.status(401).json({ error: 'Authorization header is missing or malformed' });
   }
 
-  // Bearer টোকেন এক্সট্র্যাক্ট করা
   const token = authHeader.split(' ')[1];
 
   if (!token || token === 'null' || token === 'undefined') {
@@ -45,7 +47,7 @@ const verifyToken = (req, res, next) => {
   }
 
   console.log("✅ Token successfully verified in terminal:", token);
-  req.clientToken = token; // টোকেনটি রিকোয়েস্টে পাস করে দেওয়া হলো
+  req.clientToken = token; 
   next();
 };
 
@@ -56,7 +58,7 @@ async function run() {
     const db = client.db("all-cars");
     const carCollection = db.collection("cars");
 
-    // 🚗 সকল গাড়ি গেট করার পাবলিক রুট
+    // 🚗 ১. সকল গাড়ি গেট করার পাবলিক রুট (Home/Explore Page)
     app.get('/cars', loger, async (req, res) => {
       try {
         const cursor = carCollection.find();
@@ -67,7 +69,29 @@ async function run() {
       }
     });
 
-    // 🔒 নির্দিষ্ট গাড়ি গেট করার সিকিউর রুট (verifyToken যুক্ত)
+    // 🔒 ২. নির্দিষ্ট ইউজারের অ্যাড করা গাড়ি পাওয়ার নতুন সিকিউর রুট (My Add Cars Page-এর জন্য)
+    // ইউজাররা যাতে একে অপরের ডাটা না দেখতে পারে তার জন্য এই রুট ভেরিফাইড
+    app.get('/my-cars', loger, verifyToken, async (req, res) => {
+      try {
+        // ফ্রন্টএন্ড থেকে পাঠানো কুয়েরি প্যারামিটার (যেমন: /my-cars?email=farhad@example.com)
+        const email = req.query.email;
+
+        if (!email) {
+          return res.status(400).send({ error: "User email registry query is missing." });
+        }
+
+        // ডাটাবেজে গাড়ি সেভ করার সময় আপনি যে ফিল্ডে ইমেইল রাখছেন, ঠিক সেই ফিল্ডের নাম এখানে দিন (যেমন: userEmail বা ownerEmail)
+        const query = { userEmail: email }; 
+        
+        const result = await carCollection.find(query).toArray();
+        res.send(result);
+      } catch (error) {
+        console.error("Database query crash:", error);
+        res.status(500).send({ error: "Internal Server Database error." });
+      }
+    });
+
+    // 🔒 ৩. নির্দিষ্ট গাড়ি গেট করার সিকিউর রুট
     app.get('/cars/:carid', loger, verifyToken, async (req, res) => {
       try {
         const { carid } = req.params;
@@ -81,6 +105,23 @@ async function run() {
         res.send(result);
       } catch (error) {
         res.status(400).send({ error: "Invalid Object ID Mapping" });
+      }
+    });
+
+    // 🗑️ ৪. গাড়ি ডিলিট করার সিকিউর রুট (Wipe Action)
+    app.delete('/cars/:carid', loger, verifyToken, async (req, res) => {
+      try {
+        const { carid } = req.params;
+        const query = { _id: new ObjectId(carid) };
+        const result = await carCollection.deleteOne(query);
+        
+        if (result.deletedCount === 1) {
+          res.send({ success: true, message: "Vehicle decommissioned from grid." });
+        } else {
+          res.status(404).send({ error: "Vehicle target not found." });
+        }
+      } catch (error) {
+        res.status(500).send({ error: "Failed to wipe target data." });
       }
     });
 
@@ -98,6 +139,127 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+// const express = require('express');
+// const cors = require('cors');
+// require('dotenv').config();
+
+// const app = express();
+// app.use(cors());
+// app.use(express.json()); // 👈 ফ্রন্টএন্ড থেকে আসা JSON বডি রিড করার জন্য এটি জরুরি
+
+// const port = process.env.PORT || 8000;
+// const uri = process.env.MONGO_URI;
+
+// const client = new MongoClient(uri, {
+//   serverApi: {
+//     version: ServerApiVersion.v1,
+//     strict: true,
+//     deprecationErrors: true,
+//   }
+// });
+
+// // 📋 ১. লগার মিডলওয়্যার
+// const loger = (req, res, next) => {
+//   console.log(`[LOG] ${req.method} -> ${req.url}`);
+//   next();
+// };
+
+// // 🔒 ২. টোকেন ভেরিফিকেশন মিডলওয়্যার (ফাইনাল কোড)
+// const verifyToken = (req, res, next) => {
+//   const authHeader = req.headers.authorization;
+  
+//   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+//     console.log("❌ Request Blocked: Authorization Header Missing.");
+//     return res.status(401).json({ error: 'Authorization header is missing or malformed' });
+//   }
+
+//   // Bearer টোকেন এক্সট্র্যাক্ট করা
+//   const token = authHeader.split(' ')[1];
+
+//   if (!token || token === 'null' || token === 'undefined') {
+//     console.log("❌ Request Blocked: Token is null or empty.");
+//     return res.status(401).json({ error: 'Unauthorized Node Identifier' });
+//   }
+
+//   console.log("✅ Token successfully verified in terminal:", token);
+//   req.clientToken = token; // টোকেনটি রিকোয়েস্টে পাস করে দেওয়া হলো
+//   next();
+// };
+
+// async function run() {
+//   try {
+//     await client.connect();
+    
+//     const db = client.db("all-cars");
+//     const carCollection = db.collection("cars");
+
+//     // 🚗 সকল গাড়ি গেট করার পাবলিক রুট
+//     app.get('/cars', loger, async (req, res) => {
+//       try {
+//         const cursor = carCollection.find();
+//         const result = await cursor.toArray();
+//         res.send(result);
+//       } catch (error) {
+//         res.status(500).send({ error: "Failed to fetch fleet array" });
+//       }
+//     });
+
+//     // 🔒 নির্দিষ্ট গাড়ি গেট করার সিকিউর রুট (verifyToken যুক্ত)
+//     app.get('/cars/:carid', loger, verifyToken, async (req, res) => {
+//       try {
+//         const { carid } = req.params;
+//         const query = { _id: new ObjectId(carid) };
+//         const result = await carCollection.findOne(query);
+        
+//         if (!result) {
+//           return res.status(404).send({ error: "Car node not found" });
+//         }
+        
+//         res.send(result);
+//       } catch (error) {
+//         res.status(400).send({ error: "Invalid Object ID Mapping" });
+//       }
+//     });
+
+//     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+//   } catch (err) {
+//     console.dir(err);
+//   }
+// }
+// run().catch(console.dir);
+
+// app.get('/', (req, res) => {
+//   res.send('Hello World! This is server side for car app.');
+// });
+
+// app.listen(port, () => {
+//   console.log(`Example app listening on port ${port}`);
+// });
 
 
 
