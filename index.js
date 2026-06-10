@@ -2,7 +2,7 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 // const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
-const dotenv = require('dotenv');
+// const dotenv = require('dotenv');
 const cors = require ('cors');
 const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 dotenv.config();
@@ -23,7 +23,7 @@ const uri = process.env.MONGO_URI;
 
 
   const JWKS = createRemoteJWKSet(
-      new URL(`${process.env.CLINNET_URL}/api/auth/jwks`)
+      new URL(`${process.env.CLINET_URL}/api/auth/jwks`)
     )
     // console.log(JWKS,"jaks one sss");
 
