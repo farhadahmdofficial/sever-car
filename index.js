@@ -5,8 +5,8 @@ const express = require('express');
 
 const cors = require ('cors');
 const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
-const dotenv = require('dotenv');
-dotenv.config();
+// const dotenv = require('dotenv');
+// dotenv.config();
 const app = express();
 
 app.use(express.json());
