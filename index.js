@@ -24,7 +24,7 @@ const uri = process.env.MONGO_URI;
 
 
   const JWKS = createRemoteJWKSet(
-      new URL(`${process.env.CLINET_URL}/api/auth/jwks`)
+      new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
     )
     // console.log(JWKS,"jaks one sss");
 
@@ -56,7 +56,7 @@ const verifyToken =async (req, res, next) => {
 
 try {
     const JWKS = createRemoteJWKSet(
-     new URL(`${process.env.CLINET_URL}/api/auth/jwks`)
+     new URL(`${process.env.CLIENT_URL}/api/auth/jwks`)
     )
     const { payload } = await jwtVerify(token, JWKS)
     req.user = payload;
