@@ -229,18 +229,32 @@ app.delete('/cars/:id', async (req, res) => {
 
 
 // future data  4
-
-
-
-
 app.get('/future', async (req, res) => {
- 
+  try {
+   
     const cars = carCollection.find().limit(4);
+    
+
     const result = await cars.toArray();
+  
     res.send(result);
-
-
+  } catch (error) {
+    console.error("Error fetching future cars:", error);
+    res.status(500).send({ error: "Failed to fetch cars" });
+  }
 });
+
+
+
+
+// app.get('/future', async (req, res) => {
+ 
+//     const cars = await carCollection.find().limit(4);
+//     const result = await cars.toArray();
+//     res.send(result);
+
+
+// });
 
 // single cars get 
 
