@@ -220,17 +220,30 @@ app.delete('/cars/:id', async (req, res) => {
 
 // future data  4
 
-
-
-
 app.get('/future', async (req, res) => {
- 
+  try {
+    
     const cars = carCollection.find().limit(4);
     const result = await cars.toArray();
-    res.send(result);
+    
+  
+    res.status(200).json(result); 
 
-
+  } catch (error) {
+    console.error("Error in /future backend:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
+
+
+// app.get('/future', async (req, res) => {
+ 
+//     const cars = carCollection.find().limit(4);
+//     const result = await cars.toArray();
+//     res.send(result);
+
+
+// });
 
 // single cars get 
 
@@ -375,7 +388,7 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-  res.send('fainla  server is runing  Hello World  ok!');
+  res.send('fainla  server is runing  Hello World  ok! 2');
 });
 
 app.listen(port, () => {
