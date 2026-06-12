@@ -11,11 +11,6 @@ const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 const app = express();
 
 
-// add new
-
-let db, carCollection, mybookingsCollection;
-
-
 
 app.use(express.json());
 
@@ -82,7 +77,7 @@ try {
 }
 
 // add new way fix
-run().catch(console.dir);
+// run().catch(console.dir);
 
 
 async function run() {
@@ -91,14 +86,14 @@ async function run() {
     await client.connect();
     
 
-      db = client.db("all-cars");
-     carCollection = db.collection("cars");
-     mybookingsCollection = db.collection("my-bookings");
+    //   db = client.db("all-cars");
+    //  carCollection = db.collection("cars");
+    //  mybookingsCollection = db.collection("my-bookings");
 
 
-    //  const db = client.db("all-cars");
-    // const carCollection = db.collection("cars");
-    // const mybookingsCollection = db.collection("my-bookings");
+     const db = client.db("all-cars");
+    const carCollection = db.collection("cars");
+    const mybookingsCollection = db.collection("my-bookings");
 
 
 
@@ -176,7 +171,7 @@ app.delete('/cars/:id', async (req, res) => {
   try {
     const id = req.params.id;
     
-    // ⚠️ আইডি অবজেক্টে কনভার্ট করা আবশ্যক
+  
     const query = { _id: new ObjectId(id) }; 
     
     const result = await carCollection.deleteOne(query);
@@ -363,7 +358,7 @@ await carCollection.updateOne({ _id: new ObjectId(carid) }, {
     // await client.close();
   }
 }
-// run().catch(console.dir);
+run().catch(console.dir);
 
 
 
@@ -372,8 +367,15 @@ await carCollection.updateOne({ _id: new ObjectId(carid) }, {
 
 // end run funtion 
 
+
+
+
+
+
+
+
 app.get('/', (req, res) => {
-  res.send(' server is runing  Hello World  ok!');
+  res.send('fainla  server is runing  Hello World  ok!');
 });
 
 app.listen(port, () => {
