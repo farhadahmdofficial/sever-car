@@ -388,12 +388,15 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-  res.send('fainla  server is runing  Hello World  ok! 2');
+  res.send('fainla  server is runing  Hello World  ok! 22');
 });
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+
+module.exports = app;
 
 
 
