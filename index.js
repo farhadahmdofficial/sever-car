@@ -89,7 +89,7 @@ async function run() {
     await client.connect();
     
 
-      db = client.db("all-cars");
+     const db = client.db("all-cars");
      carCollection = db.collection("cars");
      mybookingsCollection = db.collection("my-bookings");
 
