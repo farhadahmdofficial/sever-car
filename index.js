@@ -76,8 +76,8 @@ try {
   next();
 }
 
-
-
+// add new way fix
+run().catch(console.dir);
 
 
 async function run() {
@@ -358,7 +358,7 @@ await carCollection.updateOne({ _id: new ObjectId(carid) }, {
     // await client.close();
   }
 }
-run().catch(console.dir);
+// run().catch(console.dir);
 
 
 
