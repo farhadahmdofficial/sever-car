@@ -10,10 +10,6 @@ const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 
 const app = express();
 
-// add new vrial
-let db, carCollection, mybookingsCollection;
-
-
 
 
 app.use(express.json());
@@ -90,14 +86,14 @@ async function run() {
     await client.connect();
     
 
-      db = client.db("all-cars");
-     carCollection = db.collection("cars");
-     mybookingsCollection = db.collection("my-bookings");
+    //   db = client.db("all-cars");
+    //  carCollection = db.collection("cars");
+    //  mybookingsCollection = db.collection("my-bookings");
 
 
-    //  const db = client.db("all-cars");
-    // const carCollection = db.collection("cars");
-    // const mybookingsCollection = db.collection("my-bookings");
+     const db = client.db("all-cars");
+    const carCollection = db.collection("cars");
+    const mybookingsCollection = db.collection("my-bookings");
 
 
 
@@ -381,16 +377,6 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
   res.send(' server is runing  Hello World  ok!');
 });
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
-
-
-
-
-// new add 
-module.exports = app;
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
