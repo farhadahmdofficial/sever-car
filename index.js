@@ -9,6 +9,9 @@ const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 // dotenv.config();
 
 const app = express();
+// add new 
+let carCollection;
+let mybookingsCollection;
 
 
 
@@ -134,7 +137,8 @@ app.get('/cars', async (req, res) => {
 app.post("/cars",async (req,res)=>{
   const data =req.body;
   const result =await carCollection.insertOne(data);
-  res.send(result);
+  // res.send(result);
+  res.status(200).json(result);
 
 
 });
@@ -151,7 +155,8 @@ app.get('/my-cars', async (req, res) => {
     const query = { hrEmail: email }; 
     
     const result = await carCollection.find(query).toArray();
-    res.send(result);
+    // res.send(result);
+    res.status(200).json(result);
   } catch (error) {
     console.error("Backend filter failed:", error);
     res.status(500).send({ error: "Internal Server Error" });
@@ -175,7 +180,8 @@ app.delete('/cars/:id', async (req, res) => {
     const query = { _id: new ObjectId(id) }; 
     
     const result = await carCollection.deleteOne(query);
-    res.send(result);
+    // res.send(result);
+    res.status(200).json(result);
   } catch (error) {
     console.error("Delete operation failed:", error);
     res.status(500).send({ error: "Internal Server Error" });
