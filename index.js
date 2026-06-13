@@ -10,8 +10,8 @@ const { createRemoteJWKSet, jwtVerify } = require('jose-cjs');
 
 const app = express();
 // add new 
-let carCollection;
-let mybookingsCollection;
+// let carCollection;
+// let mybookingsCollection;
 
 
 
@@ -89,14 +89,14 @@ async function run() {
     await client.connect();
     
 
-     const db = client.db("all-cars");
-     carCollection = db.collection("cars");
-     mybookingsCollection = db.collection("my-bookings");
-
-
     //  const db = client.db("all-cars");
-    // const carCollection = db.collection("cars");
-    // const mybookingsCollection = db.collection("my-bookings");
+    //  carCollection = db.collection("cars");
+    //  mybookingsCollection = db.collection("my-bookings");
+
+
+     const db = client.db("all-cars");
+    const carCollection = db.collection("cars");
+    const mybookingsCollection = db.collection("my-bookings");
 
 
 
@@ -137,8 +137,8 @@ app.get('/cars', async (req, res) => {
 app.post("/cars",async (req,res)=>{
   const data =req.body;
   const result =await carCollection.insertOne(data);
-  // res.send(result);
-  res.status(200).json(result);
+  res.send(result);
+  // res.status(200).json(result);
 
 
 });
@@ -155,8 +155,8 @@ app.get('/my-cars', async (req, res) => {
     const query = { hrEmail: email }; 
     
     const result = await carCollection.find(query).toArray();
-    // res.send(result);
-    res.status(200).json(result);
+    res.send(result);
+    // res.status(200).json(result);
   } catch (error) {
     console.error("Backend filter failed:", error);
     res.status(500).send({ error: "Internal Server Error" });
@@ -180,8 +180,8 @@ app.delete('/cars/:id', async (req, res) => {
     const query = { _id: new ObjectId(id) }; 
     
     const result = await carCollection.deleteOne(query);
-    // res.send(result);
-    res.status(200).json(result);
+    res.send(result);
+    // res.status(200).json(result);
   } catch (error) {
     console.error("Delete operation failed:", error);
     res.status(500).send({ error: "Internal Server Error" });
@@ -226,30 +226,30 @@ app.delete('/cars/:id', async (req, res) => {
 
 // future data  4
 
-app.get('/future', async (req, res) => {
-  try {
-    
-    const cars = carCollection.find().limit(4);
-    const result = await cars.toArray();
-    
-  
-    res.status(200).json(result); 
-
-  } catch (error) {
-    console.error("Error in /future backend:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-
 // app.get('/future', async (req, res) => {
- 
+//   try {
+    
 //     const cars = carCollection.find().limit(4);
 //     const result = await cars.toArray();
-//     res.send(result);
+    
+  
+//     res.status(200).json(result); 
 
-
+//   } catch (error) {
+//     console.error("Error in /future backend:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
 // });
+
+
+app.get('/future', async (req, res) => {
+ 
+    const cars = carCollection.find().limit(4);
+    const result = await cars.toArray();
+    res.send(result);
+
+
+});
 
 // single cars get 
 
@@ -398,18 +398,12 @@ app.get('/', (req, res) => {
 });
 
 
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`);
-  });
-}
-
-// app.listen(port, () => {
-//   console.log(`Example app listening on port ${port}`);
-// });
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
 
 
-module.exports = app;
+// module.exports = app;
 
 
 
